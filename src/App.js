@@ -1,75 +1,32 @@
-import React, { useState, useRef } from 'react';
-import {AgGridReact} from 'ag-grid-react';
-import 'ag-grid-community/dist/styles/ag-grid.css';
-import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
+import React from 'react';
+import { BrowserRouter, Switch, Route, Link } from "react-router-dom";
+import Todolist from './Todolist';
+import Home from './Home';
+import About from './About';
 
 import "./App.css";
 
-const Todolist = () => {
+const App = () => {
   //cd Documents/Koulu/Front end/todolist
-  const [input, setInput] = useState({desc:"", date:"", priority:""});
-  const [todos, setTodos] = useState([]);
-  const [cantDelete, setCantDelete] = useState("");
-
-  const gridRef = useRef();
-
-  const columns = [
-    {field: "desc", sortable: true, filter:true, headerName: "Description"},
-    {field: "date", sortable: true, filter:true},
-    {field: "priority", sortable: true, filter:true,
-    cellStyle:params=> params.value === "high"? {color:'red'}: {color:'black'}}
-  ]
-
-  const inputChanged = (event) => {
-    setInput({...input, [event.target.name]: event.target.value});
-  };
-
-  const addTodo = (event) => {
-    event.preventDefault();
-    setTodos([...todos, input]);
-    setInput({desc:"", date:"", priority:""});
-  }
-
-  const deleteItem = () => {
-    if (gridRef.current.getSelectedNodes().length > 0) {
-    setTodos(todos.filter((todo, i) => i !== gridRef.current.getSelectedNodes()[0].childIndex))
-    } else {
-      setCantDelete("select a row first");
-    }
-  }
-
-  //if user selects a row, we can clear the message about having to select a row first
-  const clearCantDelete = () => {
-    setCantDelete("");
-  }
-
   return (
-    <div className="App">
-      <form onSubmit={addTodo}>
-        <label for="desc">Description:</label>
-        <input type="text" name="desc" onChange={inputChanged} value={input.desc}/>
-        <label for="date">Date:</label>
-        <input type="date" name="date" onChange={inputChanged} value={input.date}/>
-        <label for="priority">Priority:</label>
-        <input type="text" name="priority" onChange={inputChanged} value={input.priority}/>
-        <input type="submit" value="Add"/>
-      </form>
-      
-      
-      <div className="ag-theme-alpine" style={{height: 400, width: 600, margin: "auto"}}>
-           <AgGridReact
-              onRowSelected={clearCantDelete}
-              rowData={todos}
-              columnDefs={columns}
-              ref={gridRef}
-              rowSelection="single"
-              onGridReady={params => gridRef.current = params.api}
-           />
-       </div>
-       <p>{cantDelete}</p>
-       <button onClick={deleteItem}>Delete</button>
+    <div className="App"> 
+      <BrowserRouter>
+        <div>
+          <Link to="/">Home</Link>{'  '}
+          <Link to="/about">About</Link>{'  '}
+          <Link to="/contact">Contact</Link>{'  '}
+          <Link to="/todo">Todolist</Link>{'  '}
+          <Switch>
+            <Route exact path="/" component={Home} />
+            <Route path="/about" component={About} />
+            <Route path="/contact" render={() => <h1>Contact address</h1>} />
+            <Route path="/todo" component={Todolist} />
+            <Route render={()  => <h1>Page not found</h1>} />
+          </Switch>
+        </div>
+      </BrowserRouter>
     </div>
-  );
+  )
 };
 
-export default Todolist;
+export default App;
