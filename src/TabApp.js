@@ -5,11 +5,9 @@ import AppBar from "@mui/material/AppBar";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 
-import "./App.css";
+const TabApp = () => {
 
-const App = () => {
-  //cd Documents/Koulu/Front end/todolist
-  const [value, setValue] = useState(0);
+    const [value, setValue] = useState("home");
 
     const handleChange = (event, value) => {
         setValue(value)
@@ -17,16 +15,16 @@ const App = () => {
 
     return (
         <div>
-            <AppBar position="static">
-                <Tabs value={value} onChange={handleChange}>
+            <AppBar positions="static" onChange={handleChange}>
+                <Tabs value={value}>
                     <Tab value="home" label="Home" />
                     <Tab value="todo" label="My todos" />
                 </Tabs>
             </AppBar>
             {value === "home" && <div>Home page</div>}
-            {value === "todo" && <Todolist />}
+            {value === "todo" && {Todolist}}
         </div>
     )
-};
+}
 
-export default App;
+export default TabApp;

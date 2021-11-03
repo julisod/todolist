@@ -1,13 +1,23 @@
 import React, { useState, useRef } from 'react';
 import {AgGridReact} from 'ag-grid-react';
 import 'ag-grid-community/dist/styles/ag-grid.css';
+
 import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
+import Button from '@mui/material/Button';
+import TextField from '@mui/material/TextField';
+import DeleteIcon from '@mui/icons-material/Delete';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+
+import AdapterDateFns from '@mui/lab/AdapterDateFns';
+import LocalizationProvider from '@mui/lab/LocalizationProvider';
+import DesktopDatePicker from '@mui/lab/DesktopDatePicker';
+
 
 import "./App.css";
 
 const Todolist = () => {
   //cd Documents/Koulu/Front end/todolist
-  const [input, setInput] = useState({desc:"", date:"", priority:""});
+  const [input, setInput] = useState({desc:"", date:(new Date()), priority:""});
   const [todos, setTodos] = useState([]);
   const [cantDelete, setCantDelete] = useState("");
 
@@ -24,10 +34,14 @@ const Todolist = () => {
     setInput({...input, [event.target.name]: event.target.value});
   };
 
+  const changeDate = (newValue) => {
+    setInput({...input, date: newValue});
+  };
+
   const addTodo = (event) => {
     event.preventDefault();
     setTodos([...todos, input]);
-    setInput({desc:"", date:"", priority:""});
+    setInput({desc:"", date:null, priority:""});
   }
 
   const deleteItem = () => {
@@ -47,28 +61,35 @@ const Todolist = () => {
     <div className="App">
       <br></br>
       <form onSubmit={addTodo}>
-        <label for="desc">Description:</label>
-        <input type="text" name="desc" onChange={inputChanged} value={input.desc}/>
-        <label for="date">Date:</label>
-        <input type="date" name="date" onChange={inputChanged} value={input.date}/>
-        <label for="priority">Priority:</label>
-        <input type="text" name="priority" onChange={inputChanged} value={input.priority}/>
-        <input type="submit" value="Add"/>
+        <TextField name="desc" variant="standard" label="Description" onChange={inputChanged} value={input.desc} required/>
+        <TextField name="priority" variant="standard" label="Priority" onChange={inputChanged} value={input.priority}/>
+        <LocalizationProvider dateAdapter={AdapterDateFns}>
+          <DesktopDatePicker
+            name="date"
+            label="Date"
+            inputFormat="MM/dd/yyyy"
+            value={input.date}
+            onChange={changeDate}
+            renderInput={(params) => <TextField {...params} />}
+          />
+        </LocalizationProvider>
+        <Button type="submit" variant="contained" endIcon={<AddCircleOutlineIcon />}>Add</Button>
       </form>
       
       
       <div className="ag-theme-alpine" style={{height: 400, width: 600, margin: "auto"}}>
-           <AgGridReact
-              onRowSelected={clearMessage}
-              rowData={todos}
-              columnDefs={columns}
-              ref={gridRef}
-              rowSelection="single"
-              onGridReady={params => gridRef.current = params.api}
-           />
+        {/*haluisin keksiä miten ton taulukon ympärille saa enemmän tyhjää tilaa*/}
+        <AgGridReact
+          onRowSelected={clearMessage}
+          rowData={todos}
+          columnDefs={columns}
+          ref={gridRef}
+          rowSelection="single"
+          onGridReady={params => gridRef.current = params.api}
+        />
        </div>
        <p>{cantDelete}</p>
-       <button onClick={deleteItem}>Delete</button>
+       <Button variant="outlined" startIcon={<DeleteIcon />} onClick={deleteItem}>Delete</Button>
     </div>
   );
 };
